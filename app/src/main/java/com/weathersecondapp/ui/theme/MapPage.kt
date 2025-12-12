@@ -12,9 +12,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import com.weathersecondapp.model.MainViewModel
 
 @Composable
-fun MapPage(modifier: Modifier = Modifier.Companion) {
+fun MapPage(modifier: Modifier = Modifier.Companion,
+            viewModel: MainViewModel) {
     Column(
         modifier = modifier.fillMaxSize()
             .background(Color.Companion.Gray)

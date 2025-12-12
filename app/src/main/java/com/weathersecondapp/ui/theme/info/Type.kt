@@ -1,4 +1,4 @@
-package com.weathersecondapp.ui.theme
+package com.weathersecondapp.ui.theme.info
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

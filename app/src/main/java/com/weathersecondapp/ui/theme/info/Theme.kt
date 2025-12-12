@@ -1,6 +1,5 @@
-package com.weathersecondapp.ui.theme
+package com.weathersecondapp.ui.theme.info
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
