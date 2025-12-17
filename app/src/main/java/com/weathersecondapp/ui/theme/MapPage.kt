@@ -21,7 +21,9 @@ import com.weathersecondapp.model.MainViewModel
 
 @Composable
 fun MapPage(modifier: Modifier = Modifier,
-            viewModel: MainViewModel) {
+            viewModel: MainViewModel
+) {
+    val recife = LatLng(-8.05, -34.9)
     val camPosState = rememberCameraPositionState ()
     val context = LocalContext.current
     val hasLocationPermission by remember {
@@ -31,9 +33,6 @@ fun MapPage(modifier: Modifier = Modifier,
                     PackageManager.PERMISSION_GRANTED
         )
     }
-    val recife = LatLng(-8.05, -34.9)
-    val caruaru = LatLng(-8.27, -35.98)
-    val joaopessoa = LatLng(-7.12, -34.84)
 
     GoogleMap (modifier = Modifier.fillMaxSize(), onMapClick = {
         viewModel.add("Cidade@${it.latitude}:${it.longitude}", location = it) },
@@ -44,7 +43,8 @@ fun MapPage(modifier: Modifier = Modifier,
 
         viewModel.cities.forEach {
             if (it.location != null) {
-                Marker( state = MarkerState(position = it.location),
+                Marker(
+                    state = MarkerState(position = it.location),
                     title = it.name, snippet = "${it.location}")
             }
         }
@@ -55,20 +55,5 @@ fun MapPage(modifier: Modifier = Modifier,
             snippet = "Marcador em Recife",
             icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
         )
-
-        Marker(
-            state = MarkerState(position = caruaru),
-            title = "Caruaru",
-            snippet = "Marcador em Caruaru",
-            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)
-        )
-
-        Marker(
-            state = MarkerState(position = joaopessoa),
-            title = "João Pessoa",
-            snippet = "Marcador em João Pessoa",
-            icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)
-        )
-
     }
 }
