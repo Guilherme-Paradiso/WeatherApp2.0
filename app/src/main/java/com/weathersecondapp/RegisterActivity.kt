@@ -1,5 +1,6 @@
 package com.weathersecondapp
 
+import android.R.attr.name
 import android.app.Activity
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -15,11 +16,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,6 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.weathersecondapp.db.fb.FBDatabase
+import com.weathersecondapp.db.fb.toFBUser
+import com.weathersecondapp.model.User
 import com.weathersecondapp.ui.theme.info.WeatherSecondAPPTheme
 
 class RegisterActivity : ComponentActivity() {
@@ -55,6 +61,8 @@ fun RegisterPage(modifier: Modifier = Modifier) {
     var password by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
     val activity = LocalActivity.current as Activity
+    val state = rememberScrollState()
+    LaunchedEffect(Unit) { state.animateScrollTo(100) }
     Column(
         modifier = modifier.padding(16.dp).fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -101,6 +109,7 @@ fun RegisterPage(modifier: Modifier = Modifier) {
                         if (task.isSuccessful) {
                             Toast.makeText(activity,
                                 "Registro OK!", Toast.LENGTH_LONG).show()
+                            FBDatabase().register(User(nome, email).toFBUser())
                             activity.finish()
                         } else {
                             Toast.makeText(activity,
