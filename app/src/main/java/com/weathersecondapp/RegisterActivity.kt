@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -64,7 +65,10 @@ fun RegisterPage(modifier: Modifier = Modifier) {
     val state = rememberScrollState()
     LaunchedEffect(Unit) { state.animateScrollTo(100) }
     Column(
-        modifier = modifier.padding(16.dp).fillMaxSize(),
+        modifier = modifier
+            .padding(16.dp)
+            .fillMaxSize()
+            .verticalScroll(state),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = CenterHorizontally
     ) {
@@ -99,7 +103,8 @@ fun RegisterPage(modifier: Modifier = Modifier) {
             value = confirmPassword,
             label = { Text(text = "Confirme sua senha") },
             modifier = modifier.fillMaxWidth(fraction = 0.9f),
-            onValueChange = { confirmPassword = it }
+            onValueChange = { confirmPassword = it },
+            visualTransformation = PasswordVisualTransformation()
         )
 
         Row(modifier = modifier) {

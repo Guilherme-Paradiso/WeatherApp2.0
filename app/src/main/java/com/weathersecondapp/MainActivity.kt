@@ -37,6 +37,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import com.weathersecondapp.api.WeatherService
 import com.weathersecondapp.db.fb.FBDatabase
 import com.weathersecondapp.model.MainViewModelFactory
 
@@ -47,8 +48,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val fbDB = remember { FBDatabase() }
+            val weatherService = remember { WeatherService() }
             val viewModel : MainViewModel = viewModel(
-                factory = MainViewModelFactory(fbDB)
+                factory = MainViewModelFactory(fbDB, weatherService)
             )
             val navController = rememberNavController()
             val currentRoute = navController.currentBackStackEntryAsState()
@@ -60,7 +62,7 @@ class MainActivity : ComponentActivity() {
                 if (showDialog) CityDialog(
                     onDismiss = { showDialog = false },
                     onConfirm = { city ->
-                        if (city.isNotBlank()) viewModel.add(city)
+                        if (city.isNotBlank()) viewModel.addCity(name = city)
                         showDialog = false
                     })
                 Scaffold(
