@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +41,7 @@ fun ListPage(modifier: Modifier = Modifier,
 ) {
     val cityList = viewModel.cities
     val activity = LocalActivity.current as Activity // Para os Toasts
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -66,10 +70,17 @@ fun CityItem(
     modifier: Modifier = Modifier
 ) {
     val desc = if (weather == Weather.LOADING) "Carregando clima..." else weather.desc
+
+    val icon = if (city.isMonitored)
+        Icons.Filled.Notifications
+    else
+        Icons.Outlined.Notifications
     Row(
         modifier = modifier.fillMaxWidth().padding(8.dp).clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
-    ) {
+    )
+
+    {
         AsyncImage( // Substitui o Icon(...)
             model = weather.imgUrl,
             modifier = Modifier.size(75.dp),
@@ -78,15 +89,30 @@ fun CityItem(
         )
         Spacer(modifier = Modifier.size(12.dp))
         Column(modifier = modifier.weight(1f)) {
-            Text(modifier = Modifier,
-                text = city.name,
-                fontSize = 24.sp)
-            Text(modifier = Modifier,
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = city.name,
+                    fontSize = 24.sp
+                )
+
+                Icon(
+                    imageVector = icon,
+                    contentDescription = "Monitorada?",
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .size(20.dp),
+                    tint = Color.Gray
+                )
+            }
+
+            Text(
                 text = desc,
-                fontSize = 16.sp)
+                fontSize = 16.sp
+            )
         }
-        IconButton(onClick = onClose ) {
-            Icon(Icons.Filled.Close, contentDescription = "Close")
+            IconButton(onClick = onClose) {
+                Icon(Icons.Filled.Close, contentDescription = "Close")
+            }
         }
     }
-}
