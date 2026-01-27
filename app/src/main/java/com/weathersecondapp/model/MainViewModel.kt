@@ -1,7 +1,5 @@
 package com.weathersecondapp.model
 
-import androidx.browser.browseractions.BrowserServiceFileProvider.loadBitmap
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -14,9 +12,11 @@ import com.weathersecondapp.db.fb.FBCity
 import com.weathersecondapp.db.fb.FBDatabase
 import com.weathersecondapp.db.fb.FBUser
 import com.weathersecondapp.db.fb.toFBCity
+import com.weathersecondapp.monitor.ForecastMonitor
 import com.weathersecondapp.ui.theme.nav.Route
 
 class MainViewModel (private val db: FBDatabase,
+                     private val monitor: ForecastMonitor,
     private val service: WeatherService): ViewModel(),
     FBDatabase.Listener {
     private val _cities = mutableStateMapOf<String, City>()
@@ -49,6 +49,7 @@ class MainViewModel (private val db: FBDatabase,
 
     fun update(city: City) {
         db.update(city.toFBCity())
+        monitor.updateCity(city)
     }
 
     fun remove(city: City) {
@@ -110,27 +111,33 @@ class MainViewModel (private val db: FBDatabase,
     }
 
     override fun onUserSignOut() {
-        //TODO("Not yet implemented")
+        monitor.cancelAll()
     }
 
     override fun onCityAdded(city: FBCity) {
+        val newCity = city.toCity()
         _cities[city.name!!] = city.toCity()
+        monitor.updateCity(newCity)
     }
     override fun onCityUpdated(city: FBCity) {
         _cities.remove(city.name)
-        _cities[city.name!!] = city.toCity()
+        val updatedCity = city.toCity()
+        _cities[city.name!!] = updatedCity
+        monitor.updateCity(updatedCity)
     }
     override fun onCityRemoved(city: FBCity) {
         _cities.remove(city.name)
+        monitor.cancelCity(city.toCity())
     }
 }
 
 class MainViewModelFactory(private val db : FBDatabase,
+                           private val monitor: ForecastMonitor,
                            private val service : WeatherService) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(db, service) as T
+            return MainViewModel(db, monitor, service) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

@@ -1,12 +1,12 @@
 package com.weathersecondapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +42,8 @@ import com.google.firebase.auth.auth
 import com.weathersecondapp.api.WeatherService
 import com.weathersecondapp.db.fb.FBDatabase
 import com.weathersecondapp.model.MainViewModelFactory
+import com.weathersecondapp.monitor.ForecastMonitor
+import androidx.core.util.Consumer
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -50,9 +53,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             val fbDB = remember { FBDatabase() }
             val weatherService = remember { WeatherService(this) }
+            val monitor = ForecastMonitor(this)
             val viewModel : MainViewModel = viewModel(
-                factory = MainViewModelFactory(fbDB, weatherService)
+                factory = MainViewModelFactory(fbDB, monitor, weatherService)
             )
+            DisposableEffect(Unit) {
+                val listener = Consumer<Intent> { intent ->
+                    viewModel.city = intent.getStringExtra("city")
+                    viewModel.page = Route.Home
+                }
+                addOnNewIntentListener(listener)
+                onDispose { removeOnNewIntentListener(listener) }
+            }
             val navController = rememberNavController()
             val currentRoute = navController.currentBackStackEntryAsState()
             val showButton = currentRoute.value?.destination?.hasRoute(Route.List::class) == true
