@@ -45,6 +45,7 @@ class MainViewModel (private val db: Repository,
     }
 
     fun update(city: City) {
+        db.update(city)
         monitor.updateCity(city)
     }
 
@@ -111,15 +112,13 @@ class MainViewModel (private val db: Repository,
     }
 
     override fun onCityAdded(city: City) {
-        val newCity = city
         _cities[city.name!!] = city
-        monitor.updateCity(newCity)
+        monitor.updateCity(city)
     }
     override fun onCityUpdated(city: City) {
         _cities.remove(city.name)
-        val updatedCity = city
-        _cities[city.name!!] = updatedCity
-        monitor.updateCity(updatedCity)
+        _cities[city.name!!] = city
+        monitor.updateCity(city)
     }
     override fun onCityRemoved(city: City) {
         _cities.remove(city.name)
