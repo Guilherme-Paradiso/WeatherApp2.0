@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.weathersecondapp.model.MainViewModel
-import com.weathersecondapp.ui.theme.HomePage
-import com.weathersecondapp.ui.theme.ListPage
-import com.weathersecondapp.ui.theme.MapPage
+import com.weathersecondapp.MainViewModel
+import com.weathersecondapp.HomePage
+import com.weathersecondapp.ListPage
+import com.weathersecondapp.MapPage
 
 @Composable
 fun MainNavHost(navController: NavHostController,

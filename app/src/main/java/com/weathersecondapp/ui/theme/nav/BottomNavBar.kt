@@ -5,13 +5,9 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.weathersecondapp.model.MainViewModel
+import com.weathersecondapp.MainViewModel
 
 @Composable
     fun BottomNavBar(viewModel: MainViewModel, items: List<BottomNavItem>) {

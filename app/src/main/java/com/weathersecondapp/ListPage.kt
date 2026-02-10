@@ -1,4 +1,4 @@
-package com.weathersecondapp.ui.theme
+package com.weathersecondapp
 
 import android.app.Activity
 import android.widget.Toast
@@ -17,21 +17,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.weathersecondapp.R
 import com.weathersecondapp.model.City
-import com.weathersecondapp.model.MainViewModel
 import com.weathersecondapp.model.Weather
 import com.weathersecondapp.ui.theme.nav.Route
 
@@ -39,7 +38,10 @@ import com.weathersecondapp.ui.theme.nav.Route
 fun ListPage(modifier: Modifier = Modifier,
              viewModel: MainViewModel
 ) {
-    val cityList = viewModel.cities
+    val cityMap = viewModel.cities.collectAsStateWithLifecycle(emptyMap()).value
+    val cityList = cityMap.values.toList().sortedBy { it.name }
+    val weatherMap = viewModel.weather.collectAsStateWithLifecycle(emptyMap()).value
+
     val activity = LocalActivity.current as Activity // Para os Toasts
 
     LazyColumn(
@@ -48,7 +50,13 @@ fun ListPage(modifier: Modifier = Modifier,
             .padding(8.dp)
     ) {
         items(items = cityList, key = { it.name } ) { city ->
-            CityItem(city = city, weather = viewModel.weather(city.name),
+            LaunchedEffect(city.name) {
+                viewModel.loadWeather(city.name)
+            }
+
+            val weather = weatherMap[city.name]?:Weather.LOADING;
+
+            CityItem(city = city, weather = weather,
                 onClose = {
                 viewModel.remove(city)
                 Toast.makeText(activity, "Cidade removida!", Toast.LENGTH_LONG).show()

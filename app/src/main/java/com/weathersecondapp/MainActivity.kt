@@ -28,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
-import com.weathersecondapp.model.MainViewModel
 import com.weathersecondapp.ui.theme.CityDialog
 import com.weathersecondapp.ui.theme.info.WeatherSecondAPPTheme
 import com.weathersecondapp.ui.theme.nav.BottomNavBar
@@ -41,9 +40,9 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.weathersecondapp.api.WeatherService
 import com.weathersecondapp.db.fb.FBDatabase
-import com.weathersecondapp.model.MainViewModelFactory
 import com.weathersecondapp.monitor.ForecastMonitor
 import androidx.core.util.Consumer
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.weathersecondapp.db.fb.local.LocalDatabase
 import com.weathersecondapp.repo.Repository
 
@@ -62,6 +61,7 @@ class MainActivity : ComponentActivity() {
             val viewModel : MainViewModel = viewModel(
                 factory = MainViewModelFactory(repository, monitor, weatherService)
             )
+            val user = viewModel.user.collectAsStateWithLifecycle(null).value
             DisposableEffect(Unit) {
                 val listener = Consumer<Intent> { intent ->
                     viewModel.city = intent.getStringExtra("city")
@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
                     topBar = {
                         TopAppBar(
                             title = {
-                                val name = viewModel.user?.name?:"[carregando...]"
+                                val name = user?.name?:"[carregando...]"
                                 Text("Bem-vindo/a! $name")
                             },
                                     actions = {
